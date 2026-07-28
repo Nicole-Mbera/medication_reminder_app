@@ -1,6 +1,6 @@
 {
-    "name": "medication_reminder_app",
-    "short_name": "medication_reminder_app",
+    "name": "medreminder_app",
+    "short_name": "medreminder_app",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

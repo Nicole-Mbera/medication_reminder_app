@@ -1,4 +1,4 @@
-# medication_reminder_app
+# medreminder_app
 
 A new Flutter project.
 
