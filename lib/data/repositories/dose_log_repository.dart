@@ -93,7 +93,7 @@ class DoseLogRepository {
   }
 
   double calculateAdherencePercentage(List<DoseLogModel> logs) {
-    if (logs.isEmpty) return 100.0;
+    if (logs.isEmpty) return 0.0;
     final takenCount = logs.where((l) => l.status == 'taken').length;
     return (takenCount / logs.length) * 100.0;
   }
