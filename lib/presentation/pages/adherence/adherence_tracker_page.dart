@@ -81,7 +81,7 @@ class _AdherenceTrackerPageState extends State<AdherenceTrackerPage> {
                       logs.where((l) => l.status == 'taken').length;
                   final totalCount = logs.length;
                   final pct = totalCount == 0
-                      ? 100.0
+                      ? 0.0
                       : ((takenCount / totalCount) * 100.0);
 
                   return Container(

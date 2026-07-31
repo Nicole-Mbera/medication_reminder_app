@@ -6,6 +6,12 @@ import '../../../logic/medications/medications_bloc.dart';
 import '../../../logic/medications/medications_event.dart';
 import '../../../data/models/medication_model.dart';
 import '../../widgets/custom_button.dart';
+import '../../../logic/auth/auth_bloc.dart';
+import '../../../logic/auth/auth_state.dart';
+import '../../../logic/dose_logs/dose_logs_bloc.dart';
+import '../../../logic/dose_logs/dose_logs_event.dart';
+import '../../../data/models/dose_log_model.dart';
+import '../adherence/log_dose_modal.dart';
 
 class MedicationDetailPage extends StatelessWidget {
   final MedicationModel medication;
@@ -41,6 +47,57 @@ class MedicationDetailPage extends StatelessWidget {
             child: const Text('Delete'),
           ),
         ],
+      ),
+    );
+  }
+
+  void _showLogDoseDialog(BuildContext context, MedicationModel med) {
+    showDialog(
+      context: context,
+      builder: (_) => LogDoseModal(
+        medication: med,
+        onConfirm: () {
+          final authState = context.read<AuthBloc>().state;
+          final uid = (authState is AuthAuthenticated) ? authState.user.uid : 'user_active';
+          
+          context.read<DoseLogsBloc>().add(
+                LogDoseRequested(
+                  log: DoseLogModel(
+                    id: '',
+                    medicationId: med.id,
+                    medicationName: med.name,
+                    userId: uid,
+                    scheduledTime: DateTime.now(),
+                    status: 'taken',
+                    loggedAt: DateTime.now(),
+                  ),
+                ),
+              );
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('${med.name} dose logged!'),
+              backgroundColor: AppColors.success,
+            ),
+          );
+        },
+        onSkip: () {
+          final authState = context.read<AuthBloc>().state;
+          final uid = (authState is AuthAuthenticated) ? authState.user.uid : 'user_active';
+          
+          context.read<DoseLogsBloc>().add(
+                LogDoseRequested(
+                  log: DoseLogModel(
+                    id: '',
+                    medicationId: med.id,
+                    medicationName: med.name,
+                    userId: uid,
+                    scheduledTime: DateTime.now(),
+                    status: 'missed',
+                    loggedAt: DateTime.now(),
+                  ),
+                ),
+              );
+        },
       ),
     );
   }
@@ -124,6 +181,12 @@ class MedicationDetailPage extends StatelessWidget {
                 subtitle: 'Refill recommended in 20 days',
               ),
               const Spacer(),
+              CustomButton(
+                text: 'Log Dose',
+                icon: Icons.check_circle_outline,
+                onPressed: () => _showLogDoseDialog(context, medication),
+              ),
+              const SizedBox(height: 12),
               CustomButton(
                 text: 'Edit Medication',
                 isSecondary: true,
